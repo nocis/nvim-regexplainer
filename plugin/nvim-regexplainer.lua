@@ -28,3 +28,11 @@ command('RegexplainerDebug', function () regexplainer.show {
   mode = 'debug',
   auto = false,
 } end)
+
+vim.api.nvim_create_autocmd({ 'CursorMoved', 'InsertEnter', 'InsertLeave' }, {
+  callback = function () if regexplainer.showStatus then regexplainer.hide() end  end,
+})
+
+command("RegexHelper", function()
+        regexplainer.toggleTestLocal()
+    end)

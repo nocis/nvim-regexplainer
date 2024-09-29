@@ -3,6 +3,7 @@ local tree      = require 'regexplainer.utils.treesitter'
 local utils     = require 'regexplainer.utils'
 local buffers   = require 'regexplainer.buffers'
 local defer     = require 'regexplainer.utils.defer'
+local testlocal = require 'regexplainer.localtest'
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
 ---@class RegexplainerMappings
@@ -123,11 +124,13 @@ local show_debounced_trailing, timer_trailing = defer.debounce_trailing(show, 5)
 buffers.register_timer(timer_trailing)
 
 local M = {}
+M.showStatus = false
 
 --- Show the explainer for the regexp under the cursor
 ---@param options? RegexplainerOptions
 function M.show(options)
   disable_auto = true
+  M.showStatus = true
   show(options)
   disable_auto = false
 end
@@ -182,11 +185,15 @@ function M.setup(config)
   else
     pcall(vim.api.nvim_del_augroup_by_name, augroup_name)
   end
+
+  -- setup localtest
+  -- require('regexplainer.localtest').setup()
 end
 
 --- Hide any displayed regexplainer buffers
 --
 function M.hide()
+  M.showStatus = false
   buffers.hide_all()
 end
 
@@ -214,6 +221,10 @@ function M.debug_components()
   ---@type any
   local mode = 'debug'
   show({ auto = false, display = 'split', mode = mode })
+end
+
+function M.toggleTestLocal()
+   testlocal.Togggle()
 end
 
 return M
